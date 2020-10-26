@@ -1,0 +1,39 @@
+
+version: "3.1"
+services:
+
+  server:
+    build: ./back
+    container_name: server
+    command: npm run watch-debug
+    environment:
+      - MONGOURI=mongodb://mongo/accessibe
+    ports:
+      - 3131:3131
+    depends_on:
+      - mongo
+    working_dir: /back
+    volumes:
+      - server_node_modules:/back/node_modules
+      - ./back:/back
+
+  client:
+    build: ./front
+    container_name: client
+    command: npm start
+    stdin_open: true
+    ports:
+      - 3232:3000
+    working_dir: /front
+    volumes:
+      - client_node_modules:/front/node_modules
+      - ./front:/front
+
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+volumes:
+  server_node_modules:
+  client_node_modules:
